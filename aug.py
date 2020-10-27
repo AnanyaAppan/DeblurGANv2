@@ -25,8 +25,8 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
             'geometric': albu.OneOf([albu.HorizontalFlip(always_apply=True),
                                      albu.ShiftScaleRotate(always_apply=True),
                                      albu.Transpose(always_apply=True),
-                                     albu.OpticalDistortion(always_apply=True),
-                                     albu.ElasticTransform(always_apply=True),
+                                    #  albu.OpticalDistortion(always_apply=True),
+                                    #  albu.ElasticTransform(always_apply=True),
                                      ])
             }
 
@@ -35,11 +35,11 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                'center': albu.CenterCrop(size, size, always_apply=True)}[crop]
     pad = albu.PadIfNeeded(size, size)
 
-    pipeline = albu.Compose([aug_fn, crop_fn, pad], additional_targets={'target': 'image'})
+    pipeline = albu.Compose([aug_fn, crop_fn, pad], additional_targets={'clear':'image', 'map':'image'})
 
-    def process(a, b):
-        r = pipeline(image=a, target=b)
-        return r['image'], r['target']
+    def process(a, b, c):
+        r = pipeline(image=a, clear=b, map=c)
+        return r['image'], r['clear'], r['map']
 
     return process
 

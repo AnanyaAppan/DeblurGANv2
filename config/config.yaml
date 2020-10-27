@@ -3,13 +3,14 @@ project: deblur_gan
 experiment_desc: fpn
 
 train:
-  files_a: &FILES_A /datasets/my_dataset/**/*.jpg
-  files_b: *FILES_A
+  files_a: &TRAIN_A ../data/REDS/train_blur/train_blur/*/*.png
+  files_b: &TRAIN_B ../data/REDS/train_sharp/train_sharp/*/*.png
+  files_c: &TRAIN_C ../data/REDS/train_maps/*/*.png
   size: &SIZE 256
   crop: random
   preload: &PRELOAD false
   preload_size: &PRELOAD_SIZE 0
-  bounds: [0, .9]
+  bounds: [0, 1]
   scope: geometric
   corrupt: &CORRUPT
     - name: cutout
@@ -28,22 +29,23 @@ train:
     - name: sharpen
 
 val:
-  files_a: *FILES_A
-  files_b: *FILES_A
+  files_a: &VAL_A ../data/REDS/val_blur/val_blur/*/*.png
+  files_b: &VAL_B ../data/REDS/val_sharp/val_sharp/*/*.png
+  files_c: &VAL_C ../data/REDS/val_maps/*/*.png
   size: *SIZE
   scope: geometric
   crop: center
   preload: *PRELOAD
   preload_size: *PRELOAD_SIZE
-  bounds: [.9, 1]
+  bounds: [0, 1]
   corrupt: *CORRUPT
 
 phase: train
 warmup_num: 3
 model:
-  g_name: fpn_inception
+  g_name: human_aware
   blocks: 9
-  d_name: double_gan # may be no_gan, patch_gan, double_gan, multi_scale
+  d_name: no_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
   content_loss: perceptual
   adv_lambda: 0.001

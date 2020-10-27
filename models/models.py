@@ -13,8 +13,10 @@ class DeblurModel(nn.Module):
         img = data['a']
         inputs = img
         targets = data['b']
-        inputs, targets = inputs.cuda(), targets.cuda()
-        return inputs, targets
+        attention_map = data['c']
+        downsampled_attention_map = data['d']
+        inputs, targets, attention_map, downsampled_attention_map = inputs.cuda(), targets.cuda(), attention_map.cuda(), downsampled_attention_map.cuda()
+        return inputs, targets, attention_map, downsampled_attention_map
 
     def tensor2im(self, image_tensor, imtype=np.uint8):
         image_numpy = image_tensor[0].cpu().float().numpy()

@@ -9,6 +9,7 @@ from models.fpn_inception import FPNInception
 from models.fpn_inception_simple import FPNInceptionSimple
 from models.unet_seresnext import UNetSEResNext
 from models.fpn_densenet import FPNDense
+from models.human_aware import HumanAware
 ###############################################################################
 # Functions
 ###############################################################################
@@ -286,6 +287,8 @@ def get_generator(model_config):
     elif generator_name == 'unet_seresnext':
         model_g = UNetSEResNext(norm_layer=get_norm_layer(norm_type=model_config['norm_layer']),
                                 pretrained=model_config['pretrained'])
+    elif generator_name == 'human_aware' :
+        model_g = HumanAware()
     else:
         raise ValueError("Generator Network [%s] not recognized." % generator_name)
 

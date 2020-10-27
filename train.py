@@ -21,6 +21,20 @@ cv2.setNumThreads(0)
 
 
 class Trainer:
+
+    def loss_with_attention(self, output, target, attention_map):
+        loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
+        return loss
+
+    def calculate_fg_loss(self, outputs, real_images, attention_map):
+
+        loss = self.loss_with_attention(outputs, real_images, attention_map)
+        return loss
+
+    def calculate_bg_loss(self, outputs, real_images, attention_map):
+        loss = self.loss_with_attention(outputs, real_images, 1-attention_map)
+        return loss
+
     def __init__(self, config, train: DataLoader, val: DataLoader):
         self.config = config
         self.train_dataset = train
@@ -62,14 +76,22 @@ class Trainer:
         tq.set_description('Epoch {}, lr {}'.format(epoch, lr))
         i = 0
         for data in tq:
-            inputs, targets = self.model.get_input(data)
-            outputs = self.netG(inputs)
+            inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
+            # print(inputs.shape)
+            # print(targets.shape)
+            # print(attention_maps.shape)
+            # print(downsampled_attention_maps.shape)
+            outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
+            bg_loss = self.calculate_bg_loss(bg_decoder_outputs, targets, attention_maps)
             loss_D = self._update_d(outputs, targets)
             self.optimizer_G.zero_grad()
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
-            loss_G.backward()
+            loss_G.backward(retain_graph=True)
+            fg_loss.backward(retain_graph=True)
+            bg_loss.backward()
             self.optimizer_G.step()
             self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
@@ -90,8 +112,8 @@ class Trainer:
         tq.set_description('Validation')
         i = 0
         for data in tq:
-            inputs, targets = self.model.get_input(data)
-            outputs = self.netG(inputs)
+            inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
+            outputs, _,_ = self.netG(inputs, attention_maps, downsampled_attention_maps)
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
