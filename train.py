@@ -17,7 +17,7 @@ from models.models import get_model
 from models.networks import get_nets
 from schedulers import LinearDecay, WarmRestart
 
-cv2.setNumThreads(0)
+cv2.setNumThreads(8)
 
 
 class Trainer:
