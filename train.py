@@ -19,7 +19,6 @@ from schedulers import LinearDecay, WarmRestart
 
 cv2.setNumThreads(8)
 
-
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
@@ -77,10 +76,6 @@ class Trainer:
         i = 0
         for data in tq:
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
-            # print(inputs.shape)
-            # print(targets.shape)
-            # print(attention_maps.shape)
-            # print(downsampled_attention_maps.shape)
             outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
             bg_loss = self.calculate_bg_loss(bg_decoder_outputs, targets, attention_maps)
@@ -194,7 +189,7 @@ if __name__ == '__main__':
         config = yaml.load(f)
 
     batch_size = config.pop('batch_size')
-    get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=cpu_count(), shuffle=True, drop_last=True)
+    get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=8, shuffle=True, drop_last=True)
 
     datasets = map(config.pop, ('train', 'val'))
     datasets = map(PairedDataset.from_config, datasets)
