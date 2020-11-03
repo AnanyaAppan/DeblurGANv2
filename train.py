@@ -76,17 +76,18 @@ class Trainer:
         i = 0
         for data in tq:
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
-            outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
-            fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
-            bg_loss = self.calculate_bg_loss(bg_decoder_outputs, targets, attention_maps)
+            # outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            # fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
+            # bg_loss = self.calculate_bg_loss(bg_decoder_outputs, targets, attention_maps)
             loss_D = self._update_d(outputs, targets)
             self.optimizer_G.zero_grad()
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
             loss_G.backward(retain_graph=True)
-            fg_loss.backward(retain_graph=True)
-            bg_loss.backward()
+            # fg_loss.backward(retain_graph=True)
+            # bg_loss.backward()
             self.optimizer_G.step()
             self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
@@ -108,7 +109,8 @@ class Trainer:
         i = 0
         for data in tq:
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
-            outputs, _,_ = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            # outputs, _,_ = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
