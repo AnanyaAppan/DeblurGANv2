@@ -43,7 +43,7 @@ val:
 phase: train
 warmup_num: 3
 model:
-  g_name: human_aware
+  g_name: cnn # human_aware
   blocks: 9
   d_name: no_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3

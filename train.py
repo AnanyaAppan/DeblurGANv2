@@ -183,7 +183,6 @@ class Trainer:
         self.scheduler_G = self._get_scheduler(self.optimizer_G)
         self.scheduler_D = self._get_scheduler(self.optimizer_D)
 
-
 if __name__ == '__main__':
     with open('config/config.yaml', 'r') as f:
         config = yaml.load(f)
