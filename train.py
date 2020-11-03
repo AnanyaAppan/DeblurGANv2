@@ -190,7 +190,7 @@ if __name__ == '__main__':
         config = yaml.load(f)
 
     batch_size = config.pop('batch_size')
-    get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=8, shuffle=True, drop_last=True)
+    get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=8, shuffle=False, drop_last=True)
 
     datasets = map(config.pop, ('train', 'val'))
     datasets = map(PairedDataset.from_config, datasets)
