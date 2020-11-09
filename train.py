@@ -16,6 +16,7 @@ from models.losses import get_loss
 from models.models import get_model
 from models.networks import get_nets
 from schedulers import LinearDecay, WarmRestart
+import time
 
 cv2.setNumThreads(8)
 
@@ -75,9 +76,16 @@ class Trainer:
         tq.set_description('Epoch {}, lr {}'.format(epoch, lr))
         i = 0
         for data in tq:
+            input_start = time.time()
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
+            input_end = time.time()
+            print("time taken for getting input = %f" % (input_end - input_start))
+            output_start = time.time()
             outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            output_end = time.time()
+            print("time taken for getting output = %f" % (output_end - output_start))
             # outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
+            loss_start = time.time()
             fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
             bg_loss = self.calculate_bg_loss(bg_decoder_outputs, targets, attention_maps)
             loss_D = self._update_d(outputs, targets)
@@ -85,10 +93,15 @@ class Trainer:
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
+            loss_end = time.time()
+            print("time taken for getting loss = %f" % (loss_end - loss_start))
+            grad_desc_start = time.time()
             loss_G.backward(retain_graph=True)
             fg_loss.backward(retain_graph=True)
             bg_loss.backward()
             self.optimizer_G.step()
+            grad_desc_end = time.time()
+            print("time taken for gradient descent = %f" % (grad_desc_end - grad_desc_start))
             self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
@@ -190,10 +203,13 @@ if __name__ == '__main__':
         config = yaml.load(f)
 
     batch_size = config.pop('batch_size')
+    dataloader_start = time.time()
     get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=8, shuffle=False, drop_last=True)
 
     datasets = map(config.pop, ('train', 'val'))
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
+    dataloader_end = time.time()
+    print("time taken for preparing data loader = %f" % (dataloader_end - dataloader_start))
     trainer = Trainer(config, train=train, val=val)
     trainer.train()
