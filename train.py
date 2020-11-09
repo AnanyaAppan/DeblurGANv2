@@ -20,12 +20,6 @@ import time
 
 cv2.setNumThreads(8)
 
-data_loader_prep_time = 0
-input_time = 0
-output_time = 0
-loss_time = 0
-grad_descent_time = 0
-
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
@@ -48,6 +42,10 @@ class Trainer:
         self.adv_lambda = config['model']['adv_lambda']
         self.metric_counter = MetricCounter(config['experiment_desc'])
         self.warmup_epochs = config['warmup_num']
+        self.input_time = 0
+        self.output_time = 0
+        self.loss_time = 0
+        self.grad_descent_time = 0
 
     def train(self):
         self._init_params()
@@ -71,10 +69,10 @@ class Trainer:
             print(self.metric_counter.loss_message())
             logging.debug("Experiment Name: %s, Epoch: %d, Loss: %s" % (
                 self.config['experiment_desc'], epoch, self.metric_counter.loss_message()))
-            print("time taken for getting input = %f" % (input_time))
-            print("time taken for getting output = %f" % (output_time))
-            print("time taken for getting loss = %f" % (loss_time))
-            print("time taken for gradient descent = %f" % (grad_descent_time))
+            print("time taken for getting input = %f" % (self.input_time))
+            print("time taken for getting output = %f" % (self.output_time))
+            print("time taken for getting loss = %f" % (self.loss_time))
+            print("time taken for gradient descent = %f" % (self.grad_descent_time))
 
     def _run_epoch(self, epoch):
         self.metric_counter.clear()
@@ -89,11 +87,11 @@ class Trainer:
             input_start = time.time()
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
             input_end = time.time()
-            input_time += input_end - input_start
+            self.input_time += input_end - input_start
             output_start = time.time()
             outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             output_end = time.time()
-            output_time += output_end - output_start
+            self.output_time += output_end - output_start
             # outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             loss_start = time.time()
             fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
@@ -104,14 +102,14 @@ class Trainer:
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
             loss_end = time.time()
-            loss_time += loss_end - loss_start
+            self.loss_time += loss_end - loss_start
             grad_desc_start = time.time()
             loss_G.backward(retain_graph=True)
             fg_loss.backward(retain_graph=True)
             bg_loss.backward()
             self.optimizer_G.step()
             grad_desc_end = time.time()
-            grad_descent_time += grad_desc_end - grad_desc_start
+            self.grad_descent_time += grad_desc_end - grad_desc_start
             self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
