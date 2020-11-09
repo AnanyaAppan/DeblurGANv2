@@ -104,8 +104,8 @@ class Trainer:
             loss_end = time.time()
             self.loss_time += loss_end - loss_start
             grad_desc_start = time.time()
-            fg_loss.backward(retain_graph=True)
-            bg_loss.backward(retain_graph=True)
+            # fg_loss.backward(retain_graph=True)
+            # bg_loss.backward(retain_graph=True)
             loss_G.backward()
             self.optimizer_G.step()
             grad_desc_end = time.time()
