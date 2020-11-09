@@ -37,7 +37,6 @@ class HumanAware(Module):
         primary_branch_input = self.encoder(encoder_input)
         stacked_fg_attention = attention_map_fg.clone()
         stacked_bg_attention = attention_map_bg.clone()
-        print(type(stacked_bg_attention))
         for i in range(7) :
             stacked_fg_attention = torch.cat((stacked_fg_attention,stacked_fg_attention),1)
             stacked_bg_attention = torch.cat((stacked_bg_attention,stacked_bg_attention),1)
