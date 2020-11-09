@@ -157,7 +157,7 @@ class Trainer:
 
     def _get_optim(self, params):
         if self.config['optimizer']['name'] == 'adam':
-            optimizer = optim.Adam(params, lr=self.config['optimizer']['lr'])
+            optimizer = optim.SparseAdam(params, lr=self.config['optimizer']['lr'])
         elif self.config['optimizer']['name'] == 'sgd':
             optimizer = optim.SGD(params, lr=self.config['optimizer']['lr'])
         elif self.config['optimizer']['name'] == 'adadelta':
