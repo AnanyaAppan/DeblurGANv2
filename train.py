@@ -20,6 +20,12 @@ import time
 
 cv2.setNumThreads(8)
 
+data_loader_prep_time = 0
+input_time = 0
+output_time = 0
+loss_time = 0
+grad_descent_time = 0
+
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
@@ -79,11 +85,11 @@ class Trainer:
             input_start = time.time()
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
             input_end = time.time()
-            print("time taken for getting input = %f" % (input_end - input_start))
+            input_time += input_end - input_start
             output_start = time.time()
             outputs, fg_decoder_outputs, bg_decoder_outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             output_end = time.time()
-            print("time taken for getting output = %f" % (output_end - output_start))
+            output_time += output_end - output_start
             # outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             loss_start = time.time()
             fg_loss = self.calculate_fg_loss(fg_decoder_outputs, targets, attention_maps)
@@ -94,14 +100,14 @@ class Trainer:
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
             loss_end = time.time()
-            print("time taken for getting loss = %f" % (loss_end - loss_start))
+            loss_time += loss_end - loss_start
             grad_desc_start = time.time()
             loss_G.backward(retain_graph=True)
             fg_loss.backward(retain_graph=True)
             bg_loss.backward()
             self.optimizer_G.step()
             grad_desc_end = time.time()
-            print("time taken for gradient descent = %f" % (grad_desc_end - grad_desc_start))
+            grad_descent_time += grad_desc_end - grad_desc_start
             self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
@@ -113,6 +119,10 @@ class Trainer:
                 break
         tq.close()
         self.metric_counter.write_to_tensorboard(epoch)
+        print("time taken for getting input = %f" % (input_time))
+        print("time taken for getting output = %f" % (output_time))
+        print("time taken for getting loss = %f" % (loss_time))
+        print("time taken for gradient descent = %f" % (grad_descent_time))
 
     def _validate(self, epoch):
         self.metric_counter.clear()
@@ -210,6 +220,7 @@ if __name__ == '__main__':
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
     dataloader_end = time.time()
-    print("time taken for preparing data loader = %f" % (dataloader_end - dataloader_start))
+    data_loader_prep_time = dataloader_end - dataloader_start
+    print("Time taken for preparing dataset = %f"%(data_loader_prep_time))
     trainer = Trainer(config, train=train, val=val)
     trainer.train()
