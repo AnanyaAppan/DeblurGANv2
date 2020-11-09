@@ -71,6 +71,10 @@ class Trainer:
             print(self.metric_counter.loss_message())
             logging.debug("Experiment Name: %s, Epoch: %d, Loss: %s" % (
                 self.config['experiment_desc'], epoch, self.metric_counter.loss_message()))
+            print("time taken for getting input = %f" % (input_time))
+            print("time taken for getting output = %f" % (output_time))
+            print("time taken for getting loss = %f" % (loss_time))
+            print("time taken for gradient descent = %f" % (grad_descent_time))
 
     def _run_epoch(self, epoch):
         self.metric_counter.clear()
@@ -119,10 +123,6 @@ class Trainer:
                 break
         tq.close()
         self.metric_counter.write_to_tensorboard(epoch)
-        print("time taken for getting input = %f" % (input_time))
-        print("time taken for getting output = %f" % (output_time))
-        print("time taken for getting loss = %f" % (loss_time))
-        print("time taken for gradient descent = %f" % (grad_descent_time))
 
     def _validate(self, epoch):
         self.metric_counter.clear()
