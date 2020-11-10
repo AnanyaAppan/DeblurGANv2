@@ -8,6 +8,10 @@ from torch.nn import Linear, ReLU, Sequential, Conv2d, MaxPool2d, Module, ConvTr
 
 
 class HumanAware(Module):   
+
+    def unfreeze(self):
+        pass
+
     def __init__(self):
         super(HumanAware, self).__init__()
 
