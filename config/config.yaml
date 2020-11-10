@@ -3,12 +3,12 @@ project: deblur_gan
 experiment_desc: fpn
 
 train:
-  files_a: &TRAIN_A ../data/REDS/train_blur/train_blur/*/*.png
-  files_b: &TRAIN_B ../data/REDS/train_sharp/train_sharp/*/*.png
-  files_c: &TRAIN_C ../data/REDS/train_maps/*/*.png
-  # files_a: &TRAIN_A ./data/train/blurred_images/*.png
-  # files_b: &TRAIN_B ./data/train/clear_images/*.png
-  # files_c: &TRAIN_C ./data/train/attention_maps/*.png
+  # files_a: &TRAIN_A ../data/REDS/train_blur/train_blur/*/*.png
+  # files_b: &TRAIN_B ../data/REDS/train_sharp/train_sharp/*/*.png
+  # files_c: &TRAIN_C ../data/REDS/train_maps/*/*.png
+  files_a: &TRAIN_A ./data/train/blurred_images/*.png
+  files_b: &TRAIN_B ./data/train/clear_images/*.png
+  files_c: &TRAIN_C ./data/train/attention_maps/*.png
   size: &SIZE 256
   crop: random
   preload: &PRELOAD false
@@ -32,12 +32,12 @@ train:
     - name: sharpen
 
 val:
-  files_a: &VAL_A ../data/REDS/val_blur/val_blur/*/*.png
-  files_b: &VAL_B ../data/REDS/val_sharp/val_sharp/*/*.png
-  files_c: &VAL_C ../data/REDS/val_maps/*/*.png
-  # files_a: &VAL_A ./data/val/blurred_images/*.png
-  # files_b: &VAL_B ./data/val/clear_images/*.png
-  # files_c: &VAL_C ./data/val/attention_maps/*.png
+  # files_a: &VAL_A ../data/REDS/val_blur/val_blur/*/*.png
+  # files_b: &VAL_B ../data/REDS/val_sharp/val_sharp/*/*.png
+  # files_c: &VAL_C ../data/REDS/val_maps/*/*.png
+  files_a: &VAL_A ./data/val/blurred_images/*.png
+  files_b: &VAL_B ./data/val/clear_images/*.png
+  files_c: &VAL_C ./data/val/attention_maps/*.png
   size: *SIZE
   scope: geometric
   crop: center

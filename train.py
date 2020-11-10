@@ -106,7 +106,8 @@ class Trainer:
             grad_desc_start = time.time()
             # fg_loss.backward(retain_graph=True)
             # bg_loss.backward(retain_graph=True)
-            loss_G.backward()
+            # loss_G.backward()
+            torch.autograd.backward([fg_loss, bg_loss, loss_G])
             self.optimizer_G.step()
             grad_desc_end = time.time()
             self.grad_descent_time += grad_desc_end - grad_desc_start
