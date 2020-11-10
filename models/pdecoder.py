@@ -4,7 +4,6 @@ from models.fgdecoder import FGDecoder
 import torch
 from torch.nn import Linear, ReLU, Sequential, Conv2d, MaxPool2d, Module, ConvTranspose2d, Sigmoid
 from models.resnet_unit import ResidualBlock
-from torch.autograd import Variable
 
 class PDecoder(Module):   
     def __init__(self):

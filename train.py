@@ -8,6 +8,7 @@ import tqdm
 import yaml
 from joblib import cpu_count
 from torch.utils.data import DataLoader
+from torch.autograd import Variable
 
 from adversarial_trainer import GANFactory
 from dataset import PairedDataset
@@ -27,7 +28,6 @@ class Trainer:
         return loss
 
     def calculate_fg_loss(self, outputs, real_images, attention_map):
-
         loss = self.loss_with_attention(outputs, real_images, attention_map)
         return loss
 
@@ -109,7 +109,6 @@ class Trainer:
             # loss_G.backward()
             loss = fg_loss + bg_loss + loss_G
             loss.backward()
-            # torch.autograd.backward([fg_loss, bg_loss, loss_G])
             self.optimizer_G.step()
             grad_desc_end = time.time()
             self.grad_descent_time += grad_desc_end - grad_desc_start
