@@ -44,12 +44,6 @@ class PDecoder(Module):
 
     # Defining the forward pass    
     def forward(self, encoder_output,fg_l1, fg_l2, fg_l3,bg_l1, bg_l2, bg_l3):
-        fg_l1 = Variable(fg_l1, volatile=False, requires_grad=False)
-        fg_l2 = Variable(fg_l2, volatile=False, requires_grad=False)
-        fg_l3 = Variable(fg_l3, volatile=False, requires_grad=False)
-        bg_l1 = Variable(bg_l1, volatile=False, requires_grad=False)
-        bg_l2 = Variable(bg_l2, volatile=False, requires_grad=False)
-        bg_l3 = Variable(bg_l3, volatile=False, requires_grad=False)
         x = torch.cat([encoder_output, fg_l1, bg_l1], dim = 1)
         x = self.layer1(x)
         x = torch.cat([x, fg_l2, bg_l2], dim = 1)
