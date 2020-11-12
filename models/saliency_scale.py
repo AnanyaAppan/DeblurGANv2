@@ -57,7 +57,6 @@ class Saliency_Scale(Module):
         # Second Image
         upsampled_image1 = self.upsample(p_decoder_output1)
         input2 = torch.cat((upsampled_image1,img2),1)
-        input2 = self.layer(input2)
         img2 = self.layer(input2)
         attention_map_fg2 = downsampled_attention_map2
         attention_map_bg2 = 1 - attention_map_fg2
@@ -77,7 +76,6 @@ class Saliency_Scale(Module):
         # Third Image
         upsampled_image2 = self.upsample(p_decoder_output2)
         input3 = torch.cat((upsampled_image2,img3),1)
-        input3 = self.layer(input3)
         img3 = self.layer(input3)
         attention_map_fg3 = downsampled_attention_map3
         attention_map_bg3 = 1 - attention_map_fg3
