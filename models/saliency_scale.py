@@ -13,8 +13,8 @@ class Saliency_Scale(Module):
     def unfreeze(self):
         pass
 
-    def __init__(self):
-        super(Saliency_Scale, self).__init__()
+    def _init_(self):
+        super(Saliency_Scale, self)._init_()
 
         self.downsample = Sequential(
             Conv2d(3, 3, kernel_size=5, stride=4, padding=2),
