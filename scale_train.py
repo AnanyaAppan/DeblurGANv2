@@ -117,7 +117,7 @@ class Trainer:
             self.optimizer_G.step()
             grad_desc_end = time.time()
             self.grad_descent_time += grad_desc_end - grad_desc_start
-            self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
+            self.metric_counter.add_losses(loss_G.item(), pri_loss.item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(blurred_s3, p_decoder_output3, sharp_s3)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             tq.set_postfix(loss=self.metric_counter.loss_message())
@@ -143,7 +143,7 @@ class Trainer:
             pri_loss = self.calculate_pri_loss(p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3)
             loss_adv = self.adv_trainer.loss_g(p_decoder_output3, sharp_s3)
             loss_G = loss_content + self.adv_lambda * loss_adv
-            self.metric_counter.add_losses(loss_G.item(), loss_content.item())
+            self.metric_counter.add_losses(loss_G.item(), pri_loss.item())
             ccurr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(blurred_s3, p_decoder_output3, sharp_s3)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i:
