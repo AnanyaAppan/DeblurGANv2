@@ -108,17 +108,33 @@ class PairedDataset(Dataset):
         return len(self.data_a)
 
     def __getitem__(self, idx):
-        a, b, c = self.data_a[idx], self.data_b[idx], self.data_c[idx]
+        blurred_s3, sharp_s3, amap_s3 = self.data_a[idx], self.data_b[idx], self.data_c[idx]
         if not self.preload:
-            a, b, c = map(_read_img, (a, b, c))
-        a, b, c = self.transform_fn(a, b, c)
-        d = cv2.resize(c,fx=0.25,fy=0.25, dsize=None)
-        c = c.reshape(256,256,1)
-        d = d.reshape(64,64,1)
-        if self.corrupt_fn is not None:
-            a = self.corrupt_fn(a)
-        a, b, c, d = self._preprocess(a, b, c, d)
-        return {'a': a, 'b': b, 'c': c, 'd': d}
+            blurred_s3, sharp_s3, amap_s3 = map(_read_img, (blurred_s3, sharp_s3, amap_s3))
+        blurred_s3, sharp_s3, amap_s3 = self.transform_fn(blurred_s3, sharp_s3, amap_s3)
+        blurred_s2 = cv2.resize(blurred_s3,fx=0.5,fy=0.5, dsize=None)
+        blurred_s1 = cv2.resize(blurred_s3,fx=0.25,fy=0.25, dsize=None)
+        sharp_s2 = cv2.resize(sharp_s3,fx=0.5,fy=0.5, dsize=None)
+        sharp_s1 = cv2.resize(sharp_s3,fx=0.25,fy=0.25, dsize=None)
+        amap_s2 = cv2.resize(amap_s3,fx=0.5,fy=0.5, dsize=None)
+        amap_s1 = cv2.resize(amap_s3,fx=0.25,fy=0.25, dsize=None)
+        d_amap_s2 = cv2.resize(amap_s3,fx=0.125,fy=0.125, dsize=None)
+        d_amap_s1 = cv2.resize(amap_s3,fx=0.0625,fy=0.0625, dsize=None)
+        amap_s3 = amap_s3.reshape(256,256,1)
+        amap_s2 = amap_s2.reshape(128,128,1)
+        amap_s1 = amap_s1.reshape(64,64,1)
+        d_amap_s3 = amap_s1
+        d_amap_s2 = d_amap_s2.reshape(32,32,1)
+        d_amap_s1 = d_amap_s1.reshape(16,16,1)
+        # if self.corrupt_fn is not None:
+        #     a = self.corrupt_fn(a)
+        blurred_s1, sharp_s1, amap_s1, d_amap_s1 = self._preprocess(blurred_s1, sharp_s1, amap_s1, d_amap_s1)
+        blurred_s2, sharp_s2, amap_s2, d_amap_s2 = self._preprocess(blurred_s2, sharp_s2, amap_s2,  d_amap_s2)
+        blurred_s3, sharp_s3, amap_s3, d_amap_s3 = self._preprocess(blurred_s3, sharp_s3,  amap_s3, d_amap_s3)
+        return {'amap_s1' : amap_s1, 'blurred_s1' : blurred_s1, 'sharp_s1' : sharp_s1, 'd_amap_s1' : d_amap_s1,
+                'amap_s2' : amap_s2, 'blurred_s2' : blurred_s2, 'sharp_s2' : sharp_s2, 'd_amap_s2' : d_amap_s2,
+                'amap_s3' : amap_s3, 'blurred_s3' : blurred_s3, 'sharp_s3' : sharp_s3, 'd_amap_s3' : d_amap_s3,
+        }
 
     @staticmethod
     def from_config(config):

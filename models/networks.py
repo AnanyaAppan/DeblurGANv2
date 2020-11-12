@@ -10,6 +10,7 @@ from models.fpn_inception_simple import FPNInceptionSimple
 from models.unet_seresnext import UNetSEResNext
 from models.fpn_densenet import FPNDense
 from models.human_aware import HumanAware
+from models.saliency_scale import Saliency_Scale
 from models.cnn import CNN
 ###############################################################################
 # Functions
@@ -290,6 +291,8 @@ def get_generator(model_config):
                                 pretrained=model_config['pretrained'])
     elif generator_name == 'human_aware' :
         model_g = HumanAware()
+    elif generator_name == "saliency_net" :
+        model_g = Saliency_Scale()
     elif generator_name == 'cnn' :
         model_g = CNN()
     else:
