@@ -13,15 +13,15 @@ class Saliency_Scale(Module):
     def unfreeze(self):
         pass
 
-    def _init_(self):
-        super(Saliency_Scale, self)._init_()
+    def __init__(self):
+        super(Saliency_Scale, self).__init__()
 
         self.downsample = Sequential(
             Conv2d(3, 3, kernel_size=5, stride=4, padding=2),
         )
 
         self.upsample = Sequential(
-            ConvTranspose2d(1,3,kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1)
+            ConvTranspose2d(3,3,kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1)
         )
 
 
@@ -52,7 +52,7 @@ class Saliency_Scale(Module):
         bg_branch_input1 = torch.mul(primary_branch_input1,stacked_bg_attention1)
         fg_decoder_output1, fg_l11, fg_l21, fg_l31 = self.fgdecoder(fg_branch_input1)
         bg_decoder_output1, bg_l11, bg_l21, bg_l31 = self.bgdecoder(bg_branch_input1)
-        p_decoder_output1 = self.pdecoder(primary_branch_input, fg_l11, fg_l21, fg_l31, bg_l11, bg_l21, bg_l31)
+        p_decoder_output1 = self.pdecoder(primary_branch_input1, fg_l11, fg_l21, fg_l31, bg_l11, bg_l21, bg_l31)
 
         # Second Image
         upsampled_image1 = self.upsample(p_decoder_output1)
@@ -72,7 +72,7 @@ class Saliency_Scale(Module):
         bg_branch_input2 = torch.mul(primary_branch_input2,stacked_bg_attention2)
         fg_decoder_output2, fg_l12, fg_l22, fg_l32 = self.fgdecoder(fg_branch_input2)
         bg_decoder_output2, bg_l12, bg_l22, bg_l32 = self.bgdecoder(bg_branch_input2)
-        p_decoder_output2 = self.pdecoder(primary_branch_input, fg_l12, fg_l22, fg_l32, bg_l12, bg_l22, bg_l32)
+        p_decoder_output2 = self.pdecoder(primary_branch_input2, fg_l12, fg_l22, fg_l32, bg_l12, bg_l22, bg_l32)
 
         # Third Image
         upsampled_image2 = self.upsample(p_decoder_output2)
@@ -92,6 +92,6 @@ class Saliency_Scale(Module):
         bg_branch_input3 = torch.mul(primary_branch_input3,stacked_bg_attention3)
         fg_decoder_output3, fg_l13, fg_l23, fg_l33 = self.fgdecoder(fg_branch_input3)
         bg_decoder_output3, bg_l13, bg_l23, bg_l33 = self.bgdecoder(bg_branch_input3)
-        p_decoder_output3 = self.pdecoder(primary_branch_input, fg_l13, fg_l23, fg_l33, bg_l13, bg_l23, bg_l33)
+        p_decoder_output3 = self.pdecoder(primary_branch_input3, fg_l13, fg_l23, fg_l33, bg_l13, bg_l23, bg_l33)
 
         return p_decoder_output1, fg_decoder_output1, bg_decoder_output1, p_decoder_output2, fg_decoder_output2, bg_decoder_output2,p_decoder_output3, fg_decoder_output3, bg_decoder_output3
