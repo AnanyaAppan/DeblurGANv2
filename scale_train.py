@@ -100,7 +100,7 @@ class Trainer:
             loss_start = time.time()
             fg_loss = self.calculate_fg_loss(fg_decoder_output1, fg_decoder_output2, fg_decoder_output3, sharp_s1, sharp_s2, sharp_s3, amap_s1, amap_s2, amap_s3)
             bg_loss = self.calculate_bg_loss(bg_decoder_output1, bg_decoder_output2, bg_decoder_output3, sharp_s1, sharp_s2, sharp_s3, amap_s1, amap_s2, amap_s3)
-            loss_D = self._update_d(outputs, targets)
+            loss_D = self._update_d(p_decoder_output3, sharp_s3)
             self.optimizer_G.zero_grad()
             # loss_content = self.criterionG(outputs, targets)
             pri_loss = self.calculate_pri_loss(p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3)
