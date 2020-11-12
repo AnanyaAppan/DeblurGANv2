@@ -37,7 +37,7 @@ class Trainer:
 
     def calculate_pri_loss(self, p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3):
         loss = self.criterionG(p_decoder_output1,sharp_s1) + self.criterionG(p_decoder_output2,sharp_s2) + self.criterionG(p_decoder_output3,sharp_s3)
-
+        return loss
 
     def __init__(self, config, train: DataLoader, val: DataLoader):
         self.config = config
