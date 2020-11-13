@@ -142,7 +142,7 @@ class Trainer:
             # loss_content = self.criterionG(outputs, targets)
             pri_loss = self.calculate_pri_loss(p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3)
             loss_adv = self.adv_trainer.loss_g(p_decoder_output3, sharp_s3)
-            loss_G = loss_content + self.adv_lambda * loss_adv
+            loss_G = pri_loss + self.adv_lambda * loss_adv
             self.metric_counter.add_losses(loss_G.item(), pri_loss.item())
             ccurr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(blurred_s3, p_decoder_output3, sharp_s3)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
