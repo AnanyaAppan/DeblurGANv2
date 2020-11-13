@@ -61,8 +61,8 @@ model:
   dropout: True
 
 num_epochs: 100
-train_batches_per_epoch: 1
-val_batches_per_epoch: 1
+train_batches_per_epoch: 2000
+val_batches_per_epoch: 2000
 batch_size: 2
 image_size: [256, 256]
 
