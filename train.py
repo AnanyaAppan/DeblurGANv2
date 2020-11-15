@@ -130,11 +130,9 @@ class Trainer:
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
         i = 0
-        self.model.load_state_dict(torch.load('../weights/scale/best_fpn.h5'))
         for data in tq:
             inputs, targets, attention_maps, downsampled_attention_maps = self.model.get_input(data)
             outputs, _,_ = self.netG(inputs, attention_maps, downsampled_attention_maps)
-            cv2.imwrite('./test/output/output.jpg',outputs)
             # outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
