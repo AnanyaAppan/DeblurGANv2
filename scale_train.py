@@ -6,6 +6,7 @@ import torch
 import torch.optim as optim
 import tqdm
 import yaml
+import os
 from joblib import cpu_count
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
@@ -207,6 +208,8 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
+        if(os.path.is_file('../weights/scale/best_fpn.h5')):
+            self.netG.load_state_dict(torch.load('../weights/scale/best_fpn.h5'))
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
