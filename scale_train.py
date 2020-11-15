@@ -208,7 +208,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        if(os.path.is_file('../weights/scale/best_fpn.h5')):
+        if(os.path.exists('../weights/scale/best_fpn.h5')):
             self.netG.load_state_dict(torch.load('../weights/scale/best_fpn.h5'))
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
