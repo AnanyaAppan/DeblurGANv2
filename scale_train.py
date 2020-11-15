@@ -135,11 +135,9 @@ class Trainer:
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
         i = 0
-        self.netG.load_state_dict(torch.load('../weights/scale/best_fpn.h5'))
         for data in tq:
             amap_s1, blurred_s1, sharp_s1, d_amap_s1, amap_s2, blurred_s2, sharp_s2, d_amap_s2, amap_s3, blurred_s3, sharp_s3, d_amap_s3 = self.model.get_input(data)
             p_decoder_output1, _, _, p_decoder_output2, _, _,p_decoder_output3, _, _ = self.netG(blurred_s1, blurred_s2, blurred_s3, d_amap_s1, d_amap_s2, d_amap_s3)
-            cv2.imwrite('./test/output/output.jpg',p_decoder_output3)
             # outputs = self.netG(inputs, attention_maps, downsampled_attention_maps)
             # loss_content = self.criterionG(outputs, targets)
             pri_loss = self.calculate_pri_loss(p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3)

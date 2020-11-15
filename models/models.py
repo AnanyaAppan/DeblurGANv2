@@ -16,20 +16,16 @@ class DeblurModel(nn.Module):
         d_amap_s1 = data['d_amap_s1']
         amap_s2 = data['amap_s2']
         blurred_s2 = data['blurred_s2']
-        sharp_s2 = data['blurred_s2']
-        d_amap_s2 = data['d_amap_s2']
-        amap_s2 = data['amap_s2']
-        blurred_s2 = data['blurred_s2']
-        sharp_s2 = data['blurred_s2']
+        sharp_s2 = data['sharp_s2']
         d_amap_s2 = data['d_amap_s2']
         amap_s3 = data['amap_s3']
         blurred_s3 = data['blurred_s3']
-        sharp_s3 = data['blurred_s3']
+        sharp_s3 = data['sharp_s3']
         d_amap_s3 = data['d_amap_s3']
-        map_s1, blurred_s1, sharp_s1, d_amap_s1 = amap_s1.cuda(), blurred_s1.cuda(), sharp_s1.cuda(), d_amap_s1.cuda()
+        amap_s1, blurred_s1, sharp_s1, d_amap_s1 = amap_s1.cuda(), blurred_s1.cuda(), sharp_s1.cuda(), d_amap_s1.cuda()
         amap_s2, blurred_s2, sharp_s2, d_amap_s2 = amap_s2.cuda(), blurred_s2.cuda(), sharp_s2.cuda(), d_amap_s2.cuda()
         amap_s3, blurred_s3, sharp_s3, d_amap_s3 = amap_s3.cuda(), blurred_s3.cuda(), sharp_s3.cuda(), d_amap_s3.cuda()
-        return map_s1, blurred_s1, sharp_s1, d_amap_s1, amap_s2, blurred_s2, sharp_s2, d_amap_s2, amap_s3, blurred_s3, sharp_s3, d_amap_s3
+        return amap_s1, blurred_s1, sharp_s1, d_amap_s1, amap_s2, blurred_s2, sharp_s2, d_amap_s2, amap_s3, blurred_s3, sharp_s3, d_amap_s3
 
     def tensor2im(self, image_tensor, imtype=np.uint8):
         image_numpy = image_tensor[0].cpu().float().numpy()
