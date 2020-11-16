@@ -15,10 +15,10 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                                         albu.RandomBrightnessContrast(),
                                         albu.RandomGamma()
                                     ], p=0.5),
-                                    albu.OneOf([
-                                        albu.RGBShift(),
-                                        albu.HueSaturationValue(),
-                                    ], p=0.5),
+                                    # albu.OneOf([
+                                    #     albu.RGBShift(),
+                                    #     albu.HueSaturationValue(),
+                                    # ], p=0.5),
                                     ]),
             'weak': albu.Compose([albu.HorizontalFlip(),
                                   ]),
