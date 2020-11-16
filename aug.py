@@ -15,22 +15,22 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                                         albu.RandomBrightnessContrast(),
                                         albu.RandomGamma()
                                     ], p=0.5),
-                                    # albu.OneOf([
-                                    #     albu.RGBShift(),
-                                    #     albu.HueSaturationValue(),
-                                    # ], p=0.5),
+                                    albu.OneOf([
+                                        albu.RGBShift(),
+                                        albu.HueSaturationValue(),
+                                    ], p=0.5),
                                     ]),
             'weak': albu.Compose([albu.HorizontalFlip(),
                                   ]),
             'geometric': albu.OneOf([albu.HorizontalFlip(always_apply=True),
                                      albu.ShiftScaleRotate(always_apply=True),
-                                     albu.Transpose(always_apply=True),
+                                    #  albu.Transpose(always_apply=True),
                                     #  albu.OpticalDistortion(always_apply=True),
                                     #  albu.ElasticTransform(always_apply=True),
                                      ])
             }
 
-    aug_fn = augs[scope]
+    aug_fn = augs['geometric']
     crop_fn = {'random': albu.RandomCrop(size, size, always_apply=True),
                'center': albu.CenterCrop(size, size, always_apply=True)}[crop]
     pad = albu.PadIfNeeded(size, size)
