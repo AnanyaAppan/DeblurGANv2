@@ -42,7 +42,7 @@ class Saliency_Scale(Module):
         attention_map_fg1 = downsampled_attention_map1
         attention_map_bg1 = 1 - attention_map_fg1
         encoder_input1 = img1
-        primary_branch_input1 = self.encoder(encoder_input1)
+        encoder_out11, encoder_out12, primary_branch_input1 = self.encoder(encoder_input1)
         stacked_fg_attention1 = attention_map_fg1.clone()
         stacked_bg_attention1 = attention_map_bg1.clone()
         for i in range(7) :
@@ -52,7 +52,7 @@ class Saliency_Scale(Module):
         bg_branch_input1 = torch.mul(primary_branch_input1,stacked_bg_attention1)
         fg_decoder_output1, fg_l11, fg_l21, fg_l31 = self.fgdecoder(fg_branch_input1)
         bg_decoder_output1, bg_l11, bg_l21, bg_l31 = self.bgdecoder(bg_branch_input1)
-        p_decoder_output1 = self.pdecoder(primary_branch_input1, fg_l11, fg_l21, fg_l31, bg_l11, bg_l21, bg_l31)
+        p_decoder_output1 = self.pdecoder(encoder_out11, encoder_out12, primary_branch_input1, fg_l11, fg_l21, fg_l31, bg_l11, bg_l21, bg_l31)
 
         # Second Image
         upsampled_image1 = self.upsample(p_decoder_output1)
@@ -62,7 +62,7 @@ class Saliency_Scale(Module):
         attention_map_fg2 = downsampled_attention_map2
         attention_map_bg2 = 1 - attention_map_fg2
         encoder_input2 = img2
-        primary_branch_input2 = self.encoder(encoder_input2)
+        encoder_out21, encoder_out22, primary_branch_input2 = self.encoder(encoder_input2)
         stacked_fg_attention2 = attention_map_fg2.clone()
         stacked_bg_attention2 = attention_map_bg2.clone()
         for i in range(7) :
@@ -72,7 +72,7 @@ class Saliency_Scale(Module):
         bg_branch_input2 = torch.mul(primary_branch_input2,stacked_bg_attention2)
         fg_decoder_output2, fg_l12, fg_l22, fg_l32 = self.fgdecoder(fg_branch_input2)
         bg_decoder_output2, bg_l12, bg_l22, bg_l32 = self.bgdecoder(bg_branch_input2)
-        p_decoder_output2 = self.pdecoder(primary_branch_input2, fg_l12, fg_l22, fg_l32, bg_l12, bg_l22, bg_l32)
+        p_decoder_output2 = self.pdecoder(encoder_out21, encoder_out22, primary_branch_input2, fg_l12, fg_l22, fg_l32, bg_l12, bg_l22, bg_l32)
 
         # Third Image
         upsampled_image2 = self.upsample(p_decoder_output2)
@@ -82,7 +82,7 @@ class Saliency_Scale(Module):
         attention_map_fg3 = downsampled_attention_map3
         attention_map_bg3 = 1 - attention_map_fg3
         encoder_input3 = img3
-        primary_branch_input3 = self.encoder(encoder_input3)
+        encoder_out31, encoder_out32, primary_branch_input3 = self.encoder(encoder_input3)
         stacked_fg_attention3 = attention_map_fg3.clone()
         stacked_bg_attention3 = attention_map_bg3.clone()
         for i in range(7) :
@@ -92,6 +92,6 @@ class Saliency_Scale(Module):
         bg_branch_input3 = torch.mul(primary_branch_input3,stacked_bg_attention3)
         fg_decoder_output3, fg_l13, fg_l23, fg_l33 = self.fgdecoder(fg_branch_input3)
         bg_decoder_output3, bg_l13, bg_l23, bg_l33 = self.bgdecoder(bg_branch_input3)
-        p_decoder_output3 = self.pdecoder(primary_branch_input3, fg_l13, fg_l23, fg_l33, bg_l13, bg_l23, bg_l33)
+        p_decoder_output3 = self.pdecoder(encoder_out31, encoder_out32, primary_branch_input3, fg_l13, fg_l23, fg_l33, bg_l13, bg_l23, bg_l33)
 
         return p_decoder_output1, fg_decoder_output1, bg_decoder_output1, p_decoder_output2, fg_decoder_output2, bg_decoder_output2,p_decoder_output3, fg_decoder_output3, bg_decoder_output3

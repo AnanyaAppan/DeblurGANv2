@@ -22,16 +22,16 @@ class PDecoder(Module):
             ResidualBlock(64, 64, apply_activation=True),
             ResidualBlock(64, 64, apply_activation=True),
             ResidualBlock(64, 64, apply_activation=True),
-            ConvTranspose2d(64, 48, kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1),
+            ConvTranspose2d(64, 32, kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1),
         )
 
 
         self.layer3 = Sequential(
-            Conv2d(32*2 + 48, 48, kernel_size = 1, stride = 1),
-            ResidualBlock(48, 48, apply_activation=True),
-            ResidualBlock(48, 48, apply_activation=True),
-            ResidualBlock(48, 48, apply_activation=True),
-            ConvTranspose2d(48, 1, kernel_size = 5, stride = 1, padding = 2, dilation = 1),
+            Conv2d(32*2 + 32, 32, kernel_size = 1, stride = 1),
+            ResidualBlock(32, 32, apply_activation=True),
+            ResidualBlock(32, 32, apply_activation=True),
+            ResidualBlock(32, 32, apply_activation=True),
+            ConvTranspose2d(32, 1, kernel_size = 5, stride = 1, padding = 2, dilation = 1),
             Conv2d(1, 3, kernel_size=1, stride=1),
         )
 
@@ -42,11 +42,13 @@ class PDecoder(Module):
 
 
     # Defining the forward pass    
-    def forward(self, encoder_output,fg_l1, fg_l2, fg_l3,bg_l1, bg_l2, bg_l3):
-        x = torch.cat([encoder_output, fg_l1, bg_l1], dim = 1)
+    def forward(self, encoder_output1, encoder_output2, encoder_output3, fg_l1, fg_l2, fg_l3,bg_l1, bg_l2, bg_l3):
+        x = torch.cat([encoder_output3, fg_l1, bg_l1], dim = 1)
         x = self.layer1(x)
+        x += encoder_output2
         x = torch.cat([x, fg_l2, bg_l2], dim = 1)
         x = self.layer2(x)
+        x += encoder_output1
         x = torch.cat([x, fg_l3, bg_l3], dim = 1)
         x = self.layer3(x)
         return x
