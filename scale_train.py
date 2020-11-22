@@ -45,6 +45,7 @@ class Trainer:
         self.train_dataset = train
         self.val_dataset = val
         self.adv_lambda = config['model']['adv_lambda']
+        model.load_state_dict(torch.load("../weights/skip_scale/best_fpn.h5")['model'])
         self.metric_counter = MetricCounter(config['experiment_desc'])
         self.warmup_epochs = config['warmup_num']
         self.input_time = 0
