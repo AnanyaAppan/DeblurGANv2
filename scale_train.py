@@ -45,7 +45,6 @@ class Trainer:
         self.train_dataset = train
         self.val_dataset = val
         self.adv_lambda = config['model']['adv_lambda']
-        model.load_state_dict(torch.load("../weights/skip_scale/best_fpn.h5")['model'])
         self.metric_counter = MetricCounter(config['experiment_desc'])
         self.warmup_epochs = config['warmup_num']
         self.input_time = 0
@@ -209,6 +208,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
+        self.netG.load_state_dict(torch.load("../weights/skip_scale/best_fpn.h5")['model'])
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
