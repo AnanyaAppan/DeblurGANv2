@@ -41,7 +41,11 @@ def split_into_buckets(data: Iterable, n_buckets: int, hash_fn: Callable, salt='
 
 
 def _read_img(x: str):
-    img = imread(x)
+    print(x)
+    if 'maps' in x :
+        img = cv2.imread(x,0)
+    else :
+        img = cv2.imread(x)
     if img is None:
         logger.warning(f'Can not read image {x} with OpenCV, switching to scikit-image')
         img = imread(x)
