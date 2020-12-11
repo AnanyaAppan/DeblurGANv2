@@ -33,9 +33,6 @@ class DeblurModel(nn.Module):
         return image_numpy.astype(imtype)
 
     def get_images_and_metrics(self, inp, output, target) -> (float, float, np.ndarray):
-        inp = (inp + 1) * 0.5
-        output = (output + 1) * 0.5
-        target = (target + 1) * 0.5
         inp = self.tensor2im(inp)
         fake = self.tensor2im(output.data)
         real = self.tensor2im(target.data)
