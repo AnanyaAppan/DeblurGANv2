@@ -22,9 +22,9 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                                     ]),
             'weak': albu.Compose([albu.HorizontalFlip(),
                                   ]),
-            'geometric': albu.OneOf([albu.HorizontalFlip(always_apply=True),
-                                     albu.ShiftScaleRotate(always_apply=True),
-                                     albu.Transpose(always_apply=True),
+            # 'geometric': albu.OneOf([albu.HorizontalFlip(always_apply=True),
+            #                          albu.ShiftScaleRotate(always_apply=True),
+            #                          albu.Transpose(always_apply=True),
                                     #  albu.OpticalDistortion(always_apply=True),
                                     #  albu.ElasticTransform(always_apply=True),
                                      ])
