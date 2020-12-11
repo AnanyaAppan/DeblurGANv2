@@ -111,7 +111,7 @@ class PairedDataset(Dataset):
         blurred_s3, sharp_s3, amap_s3 = self.data_a[idx], self.data_b[idx], self.data_c[idx]
         if not self.preload:
             blurred_s3, sharp_s3, amap_s3 = map(_read_img, (blurred_s3, sharp_s3, amap_s3))
-        blurred_s3, sharp_s3, amap_s3 = self.transform_fn(blurred_s3, sharp_s3, amap_s3)
+        # blurred_s3, sharp_s3, amap_s3 = self.transform_fn(blurred_s3, sharp_s3, amap_s3)
         blurred_s2 = cv2.resize(blurred_s3,fx=0.5,fy=0.5, dsize=None)
         blurred_s1 = cv2.resize(blurred_s3,fx=0.25,fy=0.25, dsize=None)
         sharp_s2 = cv2.resize(sharp_s3,fx=0.5,fy=0.5, dsize=None)
