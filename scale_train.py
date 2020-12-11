@@ -119,6 +119,9 @@ class Trainer:
             grad_desc_end = time.time()
             self.grad_descent_time += grad_desc_end - grad_desc_start
             self.metric_counter.add_losses(loss_G.item(), pri_loss.item(), loss_D)
+            print(sharp_s3)
+            print(blurred_s1)
+            print(blurred_s3)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(blurred_s3, p_decoder_output3, sharp_s3)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             tq.set_postfix(loss=self.metric_counter.loss_message())
@@ -208,7 +211,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        self.netG.load_state_dict(torch.load("../weights/skip_scale/best_fpn.h5")['model'])
+        # self.netG.load_state_dict(torch.load("../weights/skip_scale/best_fpn.h5")['model'])
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
