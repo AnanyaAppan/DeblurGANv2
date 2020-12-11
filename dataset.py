@@ -41,7 +41,6 @@ def split_into_buckets(data: Iterable, n_buckets: int, hash_fn: Callable, salt='
 
 
 def _read_img(x: str):
-    print(x)
     if 'maps' in x :
         img = cv2.imread(x,0)
     else :
