@@ -119,9 +119,6 @@ class Trainer:
             grad_desc_end = time.time()
             self.grad_descent_time += grad_desc_end - grad_desc_start
             self.metric_counter.add_losses(loss_G.item(), pri_loss.item(), loss_D)
-            print(sharp_s3)
-            print(blurred_s1)
-            print(blurred_s3)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(blurred_s3, p_decoder_output3, sharp_s3)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             tq.set_postfix(loss=self.metric_counter.loss_message())

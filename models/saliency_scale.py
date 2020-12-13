@@ -3,6 +3,7 @@ from models.bgdecoder import BGDecoder
 from models.fgdecoder import FGDecoder
 from models.pdecoder import PDecoder
 from models.human_aware import HumanAware
+from models.CONVlstm import ConvLSTM
 import torch
 import torchvision.transforms as transforms
 from torch.nn import Linear, ReLU, Sequential, Conv2d, MaxPool2d, Module, ConvTranspose2d, Sigmoid
@@ -24,6 +25,10 @@ class Saliency_Scale(Module):
             ConvTranspose2d(3,3,kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1)
         )
 
+        self.upsample_hidden = (
+            ConvTranspose2d(128,128,kernel_size = 5, stride = 2, padding = 2, output_padding = 1, dilation = 1)
+        )
+
 
         self.layer = Sequential(
             Conv2d(3*2, 3, kernel_size = 1, stride = 1)
@@ -34,6 +39,11 @@ class Saliency_Scale(Module):
         self.bgdecoder = BGDecoder()
         self.pdecoder = PDecoder()
         self.human_aware = HumanAware()
+        self.convLSTM = ConvLSTM(input_dim=128, hidden_dim=[128], kernel_size=(5,5), num_layers=1)
+
+    def enclose_list(self,x) :
+        x = x.reshape(1,x.size()[0],x.size()[1],x.size()[2],x.size()[3])
+        return x
 
     # Defining the forward pass    
     # def forward(self, img, prev_img):
@@ -43,6 +53,8 @@ class Saliency_Scale(Module):
         attention_map_bg1 = 1 - attention_map_fg1
         encoder_input1 = img1
         encoder_out11, encoder_out12, primary_branch_input1 = self.encoder(encoder_input1)
+        primary_branch_input1, hidden_state1 = self.convLSTM(self.enclose_list(primary_branch_input1))
+        primary_branch_input1 = primary_branch_input1[0][:, 0, :, :, :]
         stacked_fg_attention1 = attention_map_fg1.clone()
         stacked_bg_attention1 = attention_map_bg1.clone()
         for i in range(7) :
@@ -63,6 +75,10 @@ class Saliency_Scale(Module):
         attention_map_bg2 = 1 - attention_map_fg2
         encoder_input2 = img2
         encoder_out21, encoder_out22, primary_branch_input2 = self.encoder(encoder_input2)
+        h,c = hidden_state1[0]
+        hidden_state1 = [[self.upsample_hidden(h),self.upsample_hidden(c)]]
+        primary_branch_input2, hidden_state2 = self.convLSTM(self.enclose_list(primary_branch_input2), hidden_state1)
+        primary_branch_input2 = primary_branch_input2[0][:, 0, :, :, :]
         stacked_fg_attention2 = attention_map_fg2.clone()
         stacked_bg_attention2 = attention_map_bg2.clone()
         for i in range(7) :
@@ -83,6 +99,11 @@ class Saliency_Scale(Module):
         attention_map_bg3 = 1 - attention_map_fg3
         encoder_input3 = img3
         encoder_out31, encoder_out32, primary_branch_input3 = self.encoder(encoder_input3)
+        h,c = hidden_state2[0]
+        hidden_state2 = [[self.upsample_hidden(h),self.upsample_hidden(c)]]
+        primary_branch_input3, hidden_state3 = self.convLSTM(self.enclose_list(primary_branch_input2), hidden_state2)
+        primary_branch_input3 = primary_branch_input3[0][:, 0, :, :, :]
+        hidden_state3,primary_branch_input3 = last_states[0]
         stacked_fg_attention3 = attention_map_fg3.clone()
         stacked_bg_attention3 = attention_map_bg3.clone()
         for i in range(7) :
