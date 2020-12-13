@@ -103,7 +103,6 @@ class Saliency_Scale(Module):
         hidden_state2 = [[self.upsample_hidden(h),self.upsample_hidden(c)]]
         primary_branch_input3, hidden_state3 = self.convLSTM(self.enclose_list(primary_branch_input3), hidden_state2)
         primary_branch_input3 = primary_branch_input3[0][:, 0, :, :, :]
-        hidden_state3,primary_branch_input3 = last_states[0]
         stacked_fg_attention3 = attention_map_fg3.clone()
         stacked_bg_attention3 = attention_map_bg3.clone()
         for i in range(7) :
