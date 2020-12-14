@@ -25,6 +25,8 @@ cv2.setNumThreads(8)
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
+        print(output.size())
+        print(attention_map.size())
         loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
         return loss
 
@@ -208,7 +210,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        self.netG.load_state_dict(torch.load("../weights/skip_scale_lstm/best_fpn.h5")['model'])
+        # self.netG.load_state_dict(torch.load("../weights/skip_scale_lstm/best_fpn.h5")['model'])
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
