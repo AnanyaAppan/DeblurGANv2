@@ -25,8 +25,6 @@ cv2.setNumThreads(8)
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
-        print(output.size())
-        print(attention_map.size())
         loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
         return loss
 
