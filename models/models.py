@@ -36,6 +36,7 @@ class DeblurModel(nn.Module):
     def get_images_and_metrics(self, inp, output, target) -> (float, float, np.ndarray):
         inp = self.tensor2im(inp)
         fake = self.tensor2im(output.data)
+        fake = cv2.cvtColor(fake, cv2.COLOR_RGB2BGR)
         cv2.imwrite('images/fake.png',fake)
         real = self.tensor2im(target.data)
         cv2.imwrite('images/real.png',real)
