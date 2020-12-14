@@ -44,7 +44,7 @@ class MetricCounter:
             imgs = self.images[tag]
             if imgs:
                 imgs = np.array(imgs)
-                self.writer.add_images(tag, imgs[:, :, :, ::-1].astype('float32') / 255, dataformats='NCHW',
+                self.writer.add_images(tag, imgs[:, :, :, ::-1].astype('float32') / 255, dataformats='NHWC',
                                        global_step=epoch_num)
                 self.images[tag] = []
 

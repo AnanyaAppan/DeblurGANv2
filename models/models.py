@@ -1,6 +1,7 @@
 import numpy as np
 import torch.nn as nn
 from skimage.measure import compare_ssim as SSIM
+import cv2
 
 from util.metrics import PSNR
 
@@ -35,6 +36,7 @@ class DeblurModel(nn.Module):
     def get_images_and_metrics(self, inp, output, target) -> (float, float, np.ndarray):
         inp = self.tensor2im(inp)
         fake = self.tensor2im(output.data)
+        cv2.imwrite('images/fake.png',fake)
         real = self.tensor2im(target.data)
         psnr = PSNR(fake, real)
         ssim = SSIM(fake, real, multichannel=True)
