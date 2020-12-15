@@ -60,7 +60,7 @@ model:
   norm_layer: instance
   dropout: True
 
-num_epochs: 40
+num_epochs: 200
 train_batches_per_epoch: 1
 val_batches_per_epoch: 1
 batch_size: 1
