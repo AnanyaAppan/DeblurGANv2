@@ -60,10 +60,10 @@ model:
   norm_layer: instance
   dropout: True
 
-num_epochs: 200
-train_batches_per_epoch: 1
-val_batches_per_epoch: 1
-batch_size: 1
+num_epochs: 1
+train_batches_per_epoch: 2000
+val_batches_per_epoch: 1500
+batch_size: 2
 image_size: [256, 256]
 
 optimizer:
