@@ -24,7 +24,7 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                                   ]),
             'geometric': albu.OneOf([
                                     albu.HorizontalFlip(always_apply=True),
-                                    albu.ShiftScaleRotate(always_apply=True),
+                                    # albu.ShiftScaleRotate(always_apply=True),
                                     albu.Transpose(always_apply=True),
                                     #  albu.OpticalDistortion(always_apply=True),
                                     #  albu.ElasticTransform(always_apply=True),
