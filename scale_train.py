@@ -25,7 +25,8 @@ cv2.setNumThreads(8)
 class Trainer:
 
     def loss_with_attention(self, output, target, attention_map):
-        loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
+        # loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
+        loss = self.criterionG(torch.mul(output,attention_map),torch.mul(target,attention_map))
         return loss
 
     def calculate_fg_loss(self, fg_decoder_output1, fg_decoder_output2, fg_decoder_output3, sharp_s1, sharp_s2, sharp_s3, amap_s1, amap_s2, amap_s3):
