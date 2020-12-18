@@ -33,7 +33,7 @@ train:
 
 val:
   files_a: &VAL_A ../data/GO_PRO/test/*/blur/*.png
-  files_b: &VAL_B .../data/GO_PRO/test/*/sharp/*.png
+  files_b: &VAL_B ../data/GO_PRO/test/*/sharp/*.png
   files_c: &VAL_C ../data/GO_PRO/test_maps/*/*.png
   # files_a: &VAL_A ./data/val/blurred_images/*.png
   # files_b: &VAL_B ./data/val/clear_images/*.png
