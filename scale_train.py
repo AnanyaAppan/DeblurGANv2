@@ -233,3 +233,4 @@ if __name__ == '__main__':
     print("Time taken for preparing dataset = %f"%(data_loader_prep_time))
     trainer = Trainer(config, train=train, val=val)
     trainer.train()
+
