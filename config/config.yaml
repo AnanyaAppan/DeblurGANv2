@@ -32,9 +32,12 @@ train:
     - name: sharpen
 
 val:
-  files_a: &VAL_A ../data/GO_PRO/test/*/blur/*.png
-  files_b: &VAL_B ../data/GO_PRO/test/*/sharp/*.png
-  files_c: &VAL_C ../data/GO_PRO/test_maps/*/*.png
+  files_a: &VAL_A ../data/REDS/val_blur/val_blur/*/*.png
+  files_b: &VAL_B ../data/REDS/val_sharp/val_sharp/*/*.png
+  files_c: &VAL_C ../data/REDS/val_maps/*/*.png
+  # files_a: &VAL_A ../data/GO_PRO/test/*/blur/*.png
+  # files_b: &VAL_B ../data/GO_PRO/test/*/sharp/*.png
+  # files_c: &VAL_C ../data/GO_PRO/test_maps/*/*.png
   # files_a: &VAL_A ./data/val/blurred_images/*.png
   # files_b: &VAL_B ./data/val/clear_images/*.png
   # files_c: &VAL_C ./data/val/attention_maps/*.png
