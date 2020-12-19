@@ -60,7 +60,7 @@ class Trainer:
                 self.netG.module.unfreeze()
                 self.optimizer_G = self._get_optim(self.netG.parameters())
                 self.scheduler_G = self._get_scheduler(self.optimizer_G)
-            self._run_epoch(epoch)
+            # self._run_epoch(epoch)
             self._validate(epoch)
             self.scheduler_G.step()
             self.scheduler_D.step()
