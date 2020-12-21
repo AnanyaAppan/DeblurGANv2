@@ -3,6 +3,7 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
+import numpy as np
 from torch.autograd import Variable
 
 from util.image_pool import ImagePool
