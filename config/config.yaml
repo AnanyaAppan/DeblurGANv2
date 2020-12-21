@@ -56,7 +56,7 @@ model:
   blocks: 9
   d_name: no_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
-  content_loss: l1
+  content_loss: gradient
   adv_lambda: 0.001
   disc_loss: wgan-gp
   learn_residual: True

@@ -274,6 +274,68 @@ class DiscLossWGANGP(DiscLossLS):
         gradient_penalty = self.calc_gradient_penalty(net, realB.data, fakeB.data)
         return self.loss_D + gradient_penalty
 
+class MixGradientLoss():
+
+    def meanGradientError(self,fakeIm, realIm):
+        filter_x = np.array([[-1, -2, -2], [0, 0, 0], [1, 2, 1]])
+        filter_y = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+
+        # filter_x = torch.FloatTensor([[-1, -2, -2], [0, 0, 0], [1, 2, 1]]).cuda().view(1, 1, 3, 3).repeat(3, 3, 1, 1)
+        # filter_y = torch.FloatTensor([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]).cuda().view(1, 1, 3, 3).repeat(3, 3, 1, 1)
+
+        fakeIm = fakeIm.detach().cpu().numpy()
+        realIm = realIm.detach().cpu().numpy()
+
+        # print(fakeIm.size())
+        # print(filter_x.size())
+        # fake_grad_x = torch.square(nn.functional.conv2d(fakeIm,filter_x,padding=1))
+        # fake_grad_y = torch.square(nn.functional.conv2d(fakeIm,filter_y,padding=1))
+
+        # real_grad_x = torch.square(nn.functional.conv2d(realIm,filter_x,padding=1))
+        # real_grad_y = torch.square(nn.functional.conv2d(realIm,filter_y,padding=1))
+        # print(fake_grad_x.size())
+
+        fake_grad_x = np.square(cv2.filter2D(fakeIm[0, :, :, :], -1, filter_x))
+        fake_grad_y = np.square(cv2.filter2D(fakeIm[0, :, :, :], -1, filter_y))
+
+        real_grad_x = np.square(cv2.filter2D(realIm[0, :, :, :], -1, filter_x))
+        real_grad_y = np.square(cv2.filter2D(realIm[0, :, :, :], -1, filter_y))
+
+        # output_gradients = torch.sqrt(torch.add(fake_grad_x, fake_grad_y))
+        # target_gradients = torch.sqrt(torch.add(real_grad_x, real_grad_y))
+
+        output_gradients = torch.Tensor(np.sqrt(np.add(fake_grad_x, fake_grad_y)))
+        target_gradients = torch.Tensor(np.sqrt(np.add(real_grad_x, real_grad_y)))
+
+        output_gradients = output_gradients.cuda()
+        target_gradients = target_gradients.cuda()
+
+        return output_gradients, target_gradients
+
+    def initialize(self, loss):
+        self.criterion = loss
+        self.transform = transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5])
+        # self.transform = transforms.Normalize(mean=[0,0,0], std=[1,1,1])
+
+    def get_loss(self, fakeIm, realIm):
+        fakeIm = (fakeIm + 1) / 2.0
+        realIm = (realIm + 1) / 2.0
+        fakeIm[0, :, :, :] = self.transform(fakeIm[0, :, :, :])
+        realIm[0, :, :, :] = self.transform(realIm[0, :, :, :])
+
+        output_gradients, target_gradients = self.meanGradientError(fakeIm, realIm)
+        loss = self.criterion(fakeIm, realIm)
+
+        # x = nn.MSELoss()(output_gradients, target_gradients)
+        # print("MGE Loss: ",x)
+        # y = torch.mean(loss)
+        # print("L1 Loss: ",y)
+
+        return 0.8 * torch.mean(loss) + 0.5 * nn.MSELoss()(output_gradients, target_gradients)
+
+    def __call__(self, fakeIm, realIm):
+        return self.get_loss(fakeIm, realIm)
+
 
 def get_loss(model):
     if model['content_loss'] == 'perceptual':
@@ -282,6 +344,9 @@ def get_loss(model):
     elif model['content_loss'] == 'l1':
         content_loss = ContentLoss()
         content_loss.initialize(nn.L1Loss())
+    elif model['content_loss'] == 'gradient' :
+        content_loss = MixGradientLoss()
+        content_loss.initialize(nn.MSELoss())
     else:
         raise ValueError("ContentLoss [%s] not recognized." % model['content_loss'])
 
