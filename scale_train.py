@@ -44,12 +44,12 @@ class Trainer:
         return loss
 
     def calculate_pri_loss(self, p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3):
-        cv2.imwrite('images/sharp_s1.png',self.tensor2im(sharp_s1))
-        cv2.imwrite('images/sharp_s2.png',self.tensor2im(sharp_s2))
-        cv2.imwrite('images/sharp_s3.png',self.tensor2im(sharp_s3))
-        cv2.imwrite('images/fake_s1.png',self.tensor2im(p_decoder_output1))
-        cv2.imwrite('images/fake_s2.png',self.tensor2im(p_decoder_output2))
-        cv2.imwrite('images/fake_s3.png',self.tensor2im(p_decoder_output3))
+        cv2.imwrite('images/sharp_s1.png',self.tensor2im(sharp_s1.data))
+        cv2.imwrite('images/sharp_s2.png',self.tensor2im(sharp_s2.data))
+        cv2.imwrite('images/sharp_s3.png',self.tensor2im(sharp_s3.data))
+        cv2.imwrite('images/fake_s1.png',self.tensor2im(p_decoder_output1.data))
+        cv2.imwrite('images/fake_s2.png',self.tensor2im(p_decoder_output2.data))
+        cv2.imwrite('images/fake_s3.png',self.tensor2im(p_decoder_output3.data))
         loss = self.criterionG(p_decoder_output1,sharp_s1) + self.criterionG(p_decoder_output2,sharp_s2) + self.criterionG(p_decoder_output3,sharp_s3)
         return loss
 
