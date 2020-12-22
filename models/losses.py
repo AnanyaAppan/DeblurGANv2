@@ -345,7 +345,8 @@ def get_loss(model):
         content_loss.initialize(nn.MSELoss())
     elif model['content_loss'] == 'l1':
         content_loss = ContentLoss()
-        content_loss.initialize(nn.L1Loss())
+        # content_loss.initialize(nn.L1Loss())
+        content_loss.initialize(nn.MSELoss())
     elif model['content_loss'] == 'gradient' :
         content_loss = MixGradientLoss()
         content_loss.initialize(nn.MSELoss())

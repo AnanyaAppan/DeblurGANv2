@@ -36,21 +36,27 @@ class Trainer:
         return loss
 
     def calculate_fg_loss(self, fg_decoder_output1, fg_decoder_output2, fg_decoder_output3, sharp_s1, sharp_s2, sharp_s3, amap_s1, amap_s2, amap_s3):
+        batch_size = sharp_s1.shape[0]
         loss = self.loss_with_attention(fg_decoder_output1, sharp_s1, amap_s1) + self.loss_with_attention(fg_decoder_output2, sharp_s2, amap_s2) + self.loss_with_attention(fg_decoder_output3, sharp_s3, amap_s3)
+        loss = loss / batch_size
         return loss
 
     def calculate_bg_loss(self, bg_decoder_output1, bg_decoder_output2, bg_decoder_output3, sharp_s1, sharp_s2, sharp_s3, amap_s1, amap_s2, amap_s3):
+        batch_size = sharp_s1.shape[0]
         loss = self.loss_with_attention(bg_decoder_output1, sharp_s1, 1 - amap_s1) + self.loss_with_attention(bg_decoder_output2, sharp_s2, 1 - amap_s2) + self.loss_with_attention(bg_decoder_output3, sharp_s3, 1 - amap_s3)
+        loss = loss / batch_size
         return loss
 
     def calculate_pri_loss(self, p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3):
-        cv2.imwrite('images/sharp_s1.png',self.tensor2im(sharp_s1.data))
-        cv2.imwrite('images/sharp_s2.png',self.tensor2im(sharp_s2.data))
-        cv2.imwrite('images/sharp_s3.png',self.tensor2im(sharp_s3.data))
-        cv2.imwrite('images/fake_s1.png',self.tensor2im(p_decoder_output1.data))
-        cv2.imwrite('images/fake_s2.png',self.tensor2im(p_decoder_output2.data))
-        cv2.imwrite('images/fake_s3.png',self.tensor2im(p_decoder_output3.data))
+        # cv2.imwrite('images/sharp_s1.png',self.tensor2im(sharp_s1.data))
+        # cv2.imwrite('images/sharp_s2.png',self.tensor2im(sharp_s2.data))s
+        # cv2.imwrite('images/sharp_s3.png',self.tensor2im(sharp_s3.data))
+        # cv2.imwrite('images/fake_s1.png',self.tensor2im(p_decoder_output1.data))
+        # cv2.imwrite('images/fake_s2.png',self.tensor2im(p_decoder_output2.data))
+        # cv2.imwrite('images/fake_s3.png',self.tensor2im(p_decoder_output3.data))
+        batch_size = sharp_s1.shape[0]
         loss = self.criterionG(p_decoder_output1,sharp_s1) + self.criterionG(p_decoder_output2,sharp_s2) + self.criterionG(p_decoder_output3,sharp_s3)
+        loss = loss / batch_size
         return loss
 
     def __init__(self, config, train, val):
@@ -221,7 +227,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        self.netG.load_state_dict(torch.load("../weights/perceptual/last_fpn.h5")['model'])
+        # self.netG.load_state_dict(torch.load("../weights/perceptual/last_fpn.h5")['model'])
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
