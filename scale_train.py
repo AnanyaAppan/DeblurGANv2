@@ -24,6 +24,11 @@ cv2.setNumThreads(8)
 
 class Trainer:
 
+    def tensor2im(self, image_tensor, imtype=np.uint8):
+        image_numpy = image_tensor[0].cpu().float().numpy()
+        image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) * 0.5 * 255.0
+        return image_numpy.astype(imtype)
+
     def loss_with_attention(self, output, target, attention_map):
         # loss = torch.mean((torch.mul(output,attention_map) - torch.mul(target,attention_map))**2)
         loss = self.criterionG(torch.mul(output,attention_map),torch.mul(target,attention_map))
@@ -38,12 +43,12 @@ class Trainer:
         return loss
 
     def calculate_pri_loss(self, p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3):
-        cv2.imwrite('images/sharp_s1.png',sharp_s1)
-        cv2.imwrite('images/sharp_s2.png',sharp_s2)
-        cv2.imwrite('images/sharp_s3.png',sharp_s3)
-        cv2.imwrite('images/fake_s1.png',p_decoder_output1)
-        cv2.imwrite('images/fake_s2.png',p_decoder_output2)
-        cv2.imwrite('images/fake_s3.png',p_decoder_output3)
+        cv2.imwrite('images/sharp_s1.png',self.tensor2im(sharp_s1))
+        cv2.imwrite('images/sharp_s2.png',self.tensor2im(sharp_s2))
+        cv2.imwrite('images/sharp_s3.png',self.tensor2im(sharp_s3))
+        cv2.imwrite('images/fake_s1.png',self.tensor2im(p_decoder_output1))
+        cv2.imwrite('images/fake_s2.png',self.tensor2im(p_decoder_output2))
+        cv2.imwrite('images/fake_s3.png',self.tensor2im(p_decoder_output3))
         loss = self.criterionG(p_decoder_output1,sharp_s1) + self.criterionG(p_decoder_output2,sharp_s2) + self.criterionG(p_decoder_output3,sharp_s3)
         return loss
 
