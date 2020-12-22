@@ -38,6 +38,12 @@ class Trainer:
         return loss
 
     def calculate_pri_loss(self, p_decoder_output1, p_decoder_output2, p_decoder_output3, sharp_s1, sharp_s2, sharp_s3):
+        cv2.imwrite('images/sharp_s1.png',sharp_s1)
+        cv2.imwrite('images/sharp_s2.png',sharp_s2)
+        cv2.imwrite('images/sharp_s3.png',sharp_s3)
+        cv2.imwrite('images/fake_s1.png',p_decoder_output1)
+        cv2.imwrite('images/fake_s2.png',p_decoder_output2)
+        cv2.imwrite('images/fake_s3.png',p_decoder_output3)
         loss = self.criterionG(p_decoder_output1,sharp_s1) + self.criterionG(p_decoder_output2,sharp_s2) + self.criterionG(p_decoder_output3,sharp_s3)
         return loss
 
@@ -209,7 +215,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        # self.netG.load_state_dict(torch.load("../weights/perceptual/last_fpn.h5")['model'])
+        self.netG.load_state_dict(torch.load("../weights/perceptual/last_fpn.h5")['model'])
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
