@@ -10,6 +10,7 @@ import os
 from joblib import cpu_count
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
+import numpy as np
 
 from adversarial_trainer import GANFactory
 from dataset import PairedDataset
